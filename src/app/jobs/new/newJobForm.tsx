@@ -28,6 +28,8 @@ import { Label } from "@/components/ui/label";
 import RichTextEditor from "@/components/RichTextEditor";
 import { draftToMarkdown } from "markdown-draft-js";
 import LoadingButton from "@/components/LoadingButton";
+import { CreateJobPosting } from "./actions";
+import { redirect } from "next/navigation";
 export default function NewJobForm() {
   const form = useForm<CreateJobValues>({
     resolver: zodResolver(createJobSchema),
@@ -49,13 +51,31 @@ export default function NewJobForm() {
   } = form;
 
   async function onSubmit(values: CreateJobValues) {
-    alert(JSON.stringify(values));
+    const formData = new FormData();
+
+    Object.entries(values).forEach(([key, value]) => {
+      if (value) {
+        formData.append(key, value);
+      }
+    });
+
+    CreateJobPosting(formData)
+      .then((res) => {
+        console.log("res ", res);
+      })
+      .catch((err) => {
+        console.log("err ", err);
+        // alert("Something went wrong, please try again !");
+      })
+      .finally(() => {
+        redirect("/job-submitted");
+      });
   }
 
   return (
     <main className="m-auto my-10 max-w-3xl space-y-10">
       <div className="space-y-5 text-center">
-        <H1>Find your perfect candidates</H1>
+        <H1>Find your perfect candidates!@</H1>
         <p>Get your job posting seen by thousands of job seekers</p>
       </div>
       <div className="space-y-6 rounded-lg border p-4">
@@ -129,6 +149,7 @@ export default function NewJobForm() {
             <FormField
               control={control}
               name="companyLogo"
+              /* eslint-disable @typescript-eslint/no-unused-vars */
               render={({ field: { value, ...fieldValues } }) => (
                 <FormItem>
                   <FormLabel>Company logo</FormLabel>

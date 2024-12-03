@@ -5,14 +5,13 @@ import { JobFilterValues } from "@/lib/validation";
 import { Metadata } from "next";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     q?: string;
     type?: string;
     location?: string;
     remote?: string;
-  };
+  }>;
 }
-
 function getTitle({ q, type, location, remote }: JobFilterValues) {
   const titlePrefix = q
     ? `${q} jobs`
@@ -26,9 +25,10 @@ function getTitle({ q, type, location, remote }: JobFilterValues) {
   return `${titlePrefix}${titleSuffix}`;
 }
 
-export function generateMetadata({
-  searchParams: { q, type, location, remote },
-}: PageProps): Metadata {
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const { q, type, location, remote } = await searchParams;
   return {
     title: `${getTitle({ q, type, location, remote: remote === "true" })} |  Flow Jobs`,
   };

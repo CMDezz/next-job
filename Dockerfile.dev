@@ -1,0 +1,18 @@
+FROM node:20-alpine as base 
+
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm i
+
+COPY . . 
+COPY next.config.js ./next.config.js
+
+RUN npx prisma generate
+# RUN npm run build
+COPY migrate-and-start.sh .
+RUN chmod +x migrate-and-start.sh
+
+# Run the custom script and npm dev
+CMD ["sh", "-c", "./migrate-and-start.sh && npm run dev"]

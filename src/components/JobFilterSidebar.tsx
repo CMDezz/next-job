@@ -45,8 +45,12 @@ export default async function JobFilterSidebar({
       select: { location: true },
       distinct: ["location"],
     })
-    .then((locations) =>
-      locations.map(({ location }) => location).filter(Boolean),
+    .then(
+      (
+        locations: {
+          location: string | null;
+        }[],
+      ) => locations.map(({ location }) => location).filter(Boolean),
     )) as string[];
 
   return (
